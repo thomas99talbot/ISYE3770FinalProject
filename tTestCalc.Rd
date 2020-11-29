@@ -1,6 +1,6 @@
 ###ISYE 3770 Final Project ###
 #Author: Thomas Talbot 
-#Last Date Modified: 11/21/20
+#Last Date Modified: 11/24/20
 #Description: The purpose of this file is to make caclculations to conduct a two sided hypothesis test on the 
 #mean traffic volume on holidays versus non-holidays 
 
@@ -63,8 +63,12 @@ keeps<-c("holiday", "date_time", "traffic_volume")
 allHolidayData<-allHolidayData[keeps]
 allHolidayData<- dplyr::distinct(allHolidayData)
 
+print(nrow(allHolidayData))
+
 nonHoliday<-nonHoliday[keeps]
 nonHoliday<- dplyr::distinct(nonHoliday)
+
+print(nrow(nonHoliday))
 
 #STEP 7: CREATE A DATA FRAME TO HOLD RECORDS FOR THE T TEST
 tTestRecords<-data.frame(matrix(ncol=6, nrow=3))
@@ -73,24 +77,24 @@ tTestCols<-c("Non-Holidays", "Holidays", "DF","Test Stat", "T Critical Value 2-s
 rownames(tTestRecords)<-tTestRows
 colnames(tTestRecords)<-tTestCols
 
-#STEP 8: FIND A RANDOM SAMPLE OF 1000 TRAFFIC VOLUMES FROM EACH POPULATION, CALCULATE MEAN AND STANDARD DEV. 
+#STEP 8: FOR EACH POPULATION, CALCULATE MEAN AND STANDARD DEV. 
 
 #population 1 is traffic volume measurements made on non-holidays, and population 2 is traffic volume measurements on holidays
 
 
-randSampleNonHol<-sample(nonHoliday$traffic_volume, 1000, replace=FALSE, prob=NULL) # a random sample of 1000 non holiday traffic volumes
-randSampleHol<-sample(allHolidayData$traffic_volume, 1000, replace=FALSE, prob=NULL) # a racndom sample of 1000 holiday traffic volumes 
+#randSampleNonHol<-sample(nonHoliday$traffic_volume, 1000, replace=FALSE, prob=NULL) # a random #sample of 1000 non holiday traffic volumes
+#randSampleHol<-sample(allHolidayData$traffic_volume, 120, replace=FALSE, prob=NULL) # a racndom #sample of 120 holiday traffic volumes 
 
-n1<-1000
-n2<-1000
+n1<-length(nonHoliday$traffic_volume)
+n2<-length(allHolidayData$traffic_volume)
 
 #Find the sample mean 
-x1bar <- mean(randSampleNonHol)
-x2bar<-mean(randSampleHol)
+x1bar <- mean(nonHoliday$traffic_volume)
+x2bar<-mean(allHolidayData$traffic_volume)
 
 #Find the sample standard deviation
-s1 <- sd(randSampleNonHol)
-s2<- sd(randSampleHol)
+s1 <- sd(nonHoliday$traffic_volume)
+s2<- sd(allHolidayData$traffic_volume)
 
 #Save the size, mean, and standard dev for each population
 tTestRecords["Sample Size",  "Non-Holidays"] <-n1
@@ -128,5 +132,5 @@ tTestRecords[1, "T Critical Value 1-sided"]<-qt(0.95, df)
 
 #STEP 12: OUTPUT THE T-TEST CALCULATIONS TO CSV FILE
 
-write.csv(tTestRecords, "/Users/thomastalbot/Desktop/ISYE3770/programmingCodes/tTestCalc.csv",row.names=TRUE)
+write.csv(tTestRecords, "/Users/thomastalbot/Desktop/ISYE3770/Nov24NewCode/tTestCalc.csv",row.names=TRUE)
 
